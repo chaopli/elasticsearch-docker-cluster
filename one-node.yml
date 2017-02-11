@@ -1,0 +1,32 @@
+version: '2'
+services:
+  elasticsearch4:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.0
+    container_name: elasticsearch4
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch1,elasticsearch2,elasticsearch3"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    mem_limit: 1g
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata4:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+
+volumes:
+  esdata4:
+    driver: local
+
+networks:
+  esnet:
+    driver: bridge
